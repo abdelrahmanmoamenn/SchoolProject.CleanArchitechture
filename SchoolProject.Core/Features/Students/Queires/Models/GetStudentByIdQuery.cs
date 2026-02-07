@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using SchoolProject.Core.Bases;
 using SchoolProject.Core.Features.Students.Queires.DTO;
-using SchoolProject.Data.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +9,13 @@ using System.Threading.Tasks;
 
 namespace SchoolProject.Core.Features.Students.Queires.Models
 {
-    public class GetStudentListQuery:IRequest< Response<List<GetStudentListDTO>>>
+    public class GetStudentByIdQuery : IRequest<Response<GetStudentDTO>>
     {
+        public int  Id {get; set;}
+        public GetStudentByIdQuery(int id )
+        {
+            
+          Id = id;
+        }
     }
 }

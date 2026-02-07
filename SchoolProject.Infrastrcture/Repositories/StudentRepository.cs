@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SchoolProject.Data.Entities;
 using SchoolProject.Infrastrcture.Data;
+using SchoolProject.Infrastrcture.InfrastructureBases;
 using SchoolProject.Infrastrcture.IRepoistories;
 using System;
 using System.Collections.Generic;
@@ -10,16 +11,16 @@ using System.Threading.Tasks;
 
 namespace SchoolProject.Infrastrcture.Repoistories
 {
-    public class StudentRepository : IStudentRepository
+    public class StudentRepository : GenericRepositoryAsync<Student>, IStudentRepository
     {
-        private readonly ApplicationDbContext _dbContext;
-        public StudentRepository(ApplicationDbContext dbContext)
+        private readonly DbSet<Student> _students;
+        public StudentRepository(ApplicationDbContext dbContext) : base(dbContext)
         {
-         _dbContext = dbContext;  
+            _students = dbContext.Set<Student>();
         }
         public async Task<List<Student>> GetStudentListAsync()
         {
-            return await _dbContext.students.ToListAsync();
+            return await _students.Include(s=>s.Department).ToListAsync();
         
         }
 
