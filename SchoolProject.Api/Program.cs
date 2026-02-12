@@ -1,11 +1,10 @@
 using Microsoft.EntityFrameworkCore;
+using Scalar.AspNetCore;
 using SchoolProject.Core;
+using SchoolProject.Core.Middleware;
 using SchoolProject.Infrastrcture;
 using SchoolProject.Infrastrcture.Data;
-using SchoolProject.Infrastrcture.IRepoistories;
-using SchoolProject.Infrastrcture.Repoistories;
 using SchoolProject.Service;
-using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +13,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-builder.Services.AddDbContext<ApplicationDbContext>(option => {
+builder.Services.AddDbContext<ApplicationDbContext>(option =>
+{
 
     option.UseSqlServer(builder.Configuration.GetConnectionString("SchoolDb"));
 });
@@ -35,6 +35,8 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 
 }
+
+app.UseMiddleware<ErrorHandlerMiddleware>();
 
 app.UseHttpsRedirection();
 

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SchoolProject.Core.Bases
+﻿namespace SchoolProject.Core.Bases
 {
     public class ResponseHandler
     {
@@ -13,13 +7,13 @@ namespace SchoolProject.Core.Bases
         {
 
         }
-        public Response<T> Deleted<T>()
+        public Response<T> Deleted<T>(string message = null)
         {
             return new Response<T>()
             {
                 StatusCode = System.Net.HttpStatusCode.OK,
                 Succeeded = true,
-                Message = "Deleted Successfully"
+                Message = message == null ? "Bad Request" : message
             };
         }
         public Response<T> Success<T>(T entity, object Meta = null)
@@ -49,6 +43,15 @@ namespace SchoolProject.Core.Bases
                 StatusCode = System.Net.HttpStatusCode.BadRequest,
                 Succeeded = false,
                 Message = Message == null ? "Bad Request" : Message
+            };
+        }
+        public Response<T> UnprocessableEntity<T>(string Message = null)
+        {
+            return new Response<T>()
+            {
+                StatusCode = System.Net.HttpStatusCode.UnprocessableEntity,
+                Succeeded = false,
+                Message = Message == null ? "UnprocessableEntity" : Message
             };
         }
 

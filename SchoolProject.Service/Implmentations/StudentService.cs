@@ -2,11 +2,6 @@
 using SchoolProject.Data.Entities;
 using SchoolProject.Infrastrcture.IRepoistories;
 using SchoolProject.Service.Abstracts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SchoolProject.Service.Implmentations
 {
@@ -19,7 +14,56 @@ namespace SchoolProject.Service.Implmentations
             _studentRepository = studentRepository;
         }
 
-        public async Task<Student> GetStudentByIDAsync(int id)
+        public async Task<string> Addasync(Student student)
+        {
+
+            await _studentRepository.AddAsync(student);
+            return "Success";
+        }
+
+        public async Task<string> DeleteAsync(Student student)
+        {
+            var trans = _studentRepository.BeginTransaction();
+            try
+            {
+                await _studentRepository.DeleteAsync(student);
+                await trans.CommitAsync();
+                return "Success";
+
+            }
+            catch
+            {
+                await trans.CommitAsync();
+                return "Faild";
+
+            }
+
+
+        }
+
+        public async Task<string> EditAsync(Student student)
+        {
+            await _studentRepository.UpdateAsync(student);
+            return "Success";
+        }
+
+        public IQueryable<Student> FilterStudentPaginatedQuerable(string search)
+        {
+            var querable = _studentRepository.GetTableNoTracking().Include(x => x.Department).AsQueryable();
+            if (search != null)
+            {
+                querable = querable.Where(x => x.Name.Contains(search) || x.Address.Contains(search));
+            }
+            return querable;
+        }
+
+        public async Task<Student> GetByIdAsync(int id)
+        {
+            var student = await _studentRepository.GetByIdAsync(id);
+            return student;
+        }
+
+        public async Task<Student> GetStudentByIdWithIncludeAsync(int id)
         {
             var student = _studentRepository.GetTableNoTracking()
                 .Include(x => x.Department)
@@ -28,10 +72,35 @@ namespace SchoolProject.Service.Implmentations
             return student;
         }
 
+        public IQueryable<Student> GetStudentQuerable()
+        {
+            return _studentRepository.GetTableNoTracking().Include(x => x.Department).AsQueryable();
+        }
+
         public async Task<List<Student>> GetStudentsListAsync()
         {
             return await _studentRepository.GetStudentListAsync();
 
+        }
+
+        public async Task<bool> IsNameExist(string name)
+        {
+            var student = _studentRepository.GetTableNoTracking().Where(x => x.Name.Equals(name)).FirstOrDefault();
+            if (student == null)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public async Task<bool> IsNameExistExcludeSelf(string name, int id)
+        {
+            var student = await _studentRepository.GetTableNoTracking().Where(x => x.Name.Equals(name) & !x.StudID.Equals(id)).FirstOrDefaultAsync();
+            if (student == null)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }
