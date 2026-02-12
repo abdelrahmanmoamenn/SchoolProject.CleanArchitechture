@@ -1,4 +1,5 @@
 ﻿using SchoolProject.Data.Entities;
+using SchoolProject.Data.Helpers;
 
 namespace SchoolProject.Service.Abstracts
 {
@@ -6,7 +7,7 @@ namespace SchoolProject.Service.Abstracts
     {
         public Task<List<Student>> GetStudentsListAsync();
         public IQueryable<Student> GetStudentQuerable();
-        public IQueryable<Student> FilterStudentPaginatedQuerable(string search);
+        public IQueryable<Student> FilterStudentPaginatedQuerable(StudentOrderingEnum orderingEnum, string search);
         public Task<Student> GetStudentByIdWithIncludeAsync(int id);
         public Task<Student> GetByIdAsync(int id);
         public Task<string> Addasync(Student student);

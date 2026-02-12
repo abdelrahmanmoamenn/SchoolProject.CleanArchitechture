@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SchoolProject.Data.Entities;
+using SchoolProject.Data.Helpers;
 using SchoolProject.Infrastrcture.IRepoistories;
 using SchoolProject.Service.Abstracts;
 
@@ -47,12 +48,30 @@ namespace SchoolProject.Service.Implmentations
             return "Success";
         }
 
-        public IQueryable<Student> FilterStudentPaginatedQuerable(string search)
+        public IQueryable<Student> FilterStudentPaginatedQuerable(StudentOrderingEnum orderingEnum, string search)
         {
             var querable = _studentRepository.GetTableNoTracking().Include(x => x.Department).AsQueryable();
             if (search != null)
             {
                 querable = querable.Where(x => x.Name.Contains(search) || x.Address.Contains(search));
+            }
+            switch (orderingEnum)
+            {
+                case StudentOrderingEnum.StudID:
+                    querable = querable.OrderBy(x => x.StudID);
+                    break;
+                case StudentOrderingEnum.Name:
+                    querable = querable.OrderBy(x => x.Name);
+                    break;
+                case StudentOrderingEnum.Address:
+                    querable = querable.OrderBy(x => x.Address);
+                    break;
+                case StudentOrderingEnum.Department:
+                    querable = querable.OrderBy(x => x.Department.DName);
+                    break;
+                default:
+                    querable = querable.OrderBy(x => x.StudID);
+                    break;
             }
             return querable;
         }

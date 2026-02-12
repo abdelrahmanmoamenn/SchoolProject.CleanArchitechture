@@ -42,7 +42,7 @@ namespace SchoolProject.Core.Features.Students.Queires.Handlers
         {
             Expression<Func<Student, GetStudentPaginatedListDTO>> expression = e => new GetStudentPaginatedListDTO(e.StudID, e.Name, e.Address, e.Department.DName);
             //var querable = _studentService.GetStudentQuerable();
-            var FilterQuery = _studentService.FilterStudentPaginatedQuerable(request.Search);
+            var FilterQuery = _studentService.FilterStudentPaginatedQuerable(request.OrderBy, request.Search);
             var paginatedList = await FilterQuery.Select(expression).ToPaginatedListAsync(request.PageNumber, request.PageSize);
             return paginatedList;
         }
