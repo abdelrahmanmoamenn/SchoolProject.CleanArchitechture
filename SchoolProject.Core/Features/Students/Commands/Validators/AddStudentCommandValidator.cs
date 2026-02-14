@@ -1,5 +1,7 @@
 ﻿using FluentValidation;
+using Microsoft.Extensions.Localization;
 using SchoolProject.Core.Features.Students.Commands.Models;
+using SchoolProject.Core.Resources;
 using SchoolProject.Service.Abstracts;
 
 namespace SchoolProject.Core.Features.Students.Commands.Validators
@@ -7,9 +9,11 @@ namespace SchoolProject.Core.Features.Students.Commands.Validators
     public class AddStudentCommandValidator : AbstractValidator<AddStudentCommand>
     {
         private readonly IStudentService _studentService;
-        public AddStudentCommandValidator(IStudentService studentService)
+        private readonly IStringLocalizer<SharedResources> _localizer;
+        public AddStudentCommandValidator(IStudentService studentService, IStringLocalizer<SharedResources> localizer)
         {
             _studentService = studentService;
+            _localizer = localizer;
             ApplyValidtionRules();
             ApplyCustomValidtionRules();
         }
@@ -17,19 +21,20 @@ namespace SchoolProject.Core.Features.Students.Commands.Validators
         public void ApplyValidtionRules()
         {
             RuleFor(x => x.Name)
-                .NotEmpty().WithMessage("Name Can't be Empty")
-                .NotNull().WithMessage("Name can't be null")
-                .MaximumLength(10).WithMessage("Max length is 10");
+                .NotEmpty().WithMessage(_localizer[SharedResourcesKeys.NotEmpty])
+                 .NotNull().WithMessage(_localizer[SharedResourcesKeys.Required])
+                 .MaximumLength(100).WithMessage(_localizer[SharedResourcesKeys.MaxLengthis100]);
+
 
             RuleFor(x => x.Address)
-                .NotEmpty().WithMessage("{PropertyName} Can't be Empty")
-                .NotNull().WithMessage("{PropertyValue} can't be null")
-                .MaximumLength(10).WithMessage("{PropertyName} length is 10");
+                .NotEmpty().WithMessage(_localizer[SharedResourcesKeys.NotEmpty])
+                .NotNull().WithMessage(_localizer[SharedResourcesKeys.Required])
+                .MaximumLength(100).WithMessage(_localizer[SharedResourcesKeys.MaxLengthis100]);
 
             RuleFor(x => x.phone)
-                .NotEmpty().WithMessage("{PropertyName} Can't be Empty")
-                .NotNull().WithMessage("{PropertyValue} can't be null")
-                .MaximumLength(10).WithMessage("{PropertyName} length is 10");
+                .NotEmpty().WithMessage(_localizer[SharedResourcesKeys.NotEmpty])
+                .NotNull().WithMessage(_localizer[SharedResourcesKeys.Required])
+                .MaximumLength(100).WithMessage(_localizer[SharedResourcesKeys.MaxLengthis100]);
 
 
         }
@@ -37,7 +42,7 @@ namespace SchoolProject.Core.Features.Students.Commands.Validators
         {
             RuleFor(x => x.Name)
                 .MustAsync(async (Key, CancellationToken) => !await _studentService.IsNameExist(Key))
-                .WithMessage("Name is Exist");
+                .WithMessage(_localizer[SharedResourcesKeys.IsExist]);
 
         }
     }

@@ -53,7 +53,7 @@ namespace SchoolProject.Service.Implmentations
             var querable = _studentRepository.GetTableNoTracking().Include(x => x.Department).AsQueryable();
             if (search != null)
             {
-                querable = querable.Where(x => x.Name.Contains(search) || x.Address.Contains(search));
+                querable = querable.Where(x => x.Localize(x.NameAr, x.NameEn).Contains(search) || x.Address.Contains(search));
             }
             switch (orderingEnum)
             {
@@ -61,13 +61,13 @@ namespace SchoolProject.Service.Implmentations
                     querable = querable.OrderBy(x => x.StudID);
                     break;
                 case StudentOrderingEnum.Name:
-                    querable = querable.OrderBy(x => x.Name);
+                    querable = querable.OrderBy(x => x.Localize(x.NameAr, x.NameEn));
                     break;
                 case StudentOrderingEnum.Address:
                     querable = querable.OrderBy(x => x.Address);
                     break;
                 case StudentOrderingEnum.Department:
-                    querable = querable.OrderBy(x => x.Department.DName);
+                    querable = querable.OrderBy(x => x.Localize(x.Department.DNameAr, x.Department.DNameEn));
                     break;
                 default:
                     querable = querable.OrderBy(x => x.StudID);
@@ -104,7 +104,7 @@ namespace SchoolProject.Service.Implmentations
 
         public async Task<bool> IsNameExist(string name)
         {
-            var student = _studentRepository.GetTableNoTracking().Where(x => x.Name.Equals(name)).FirstOrDefault();
+            var student = _studentRepository.GetTableNoTracking().Where(x => x.Localize(x.NameAr, x.NameEn).Equals(name)).FirstOrDefault();
             if (student == null)
             {
                 return false;
@@ -114,7 +114,7 @@ namespace SchoolProject.Service.Implmentations
 
         public async Task<bool> IsNameExistExcludeSelf(string name, int id)
         {
-            var student = await _studentRepository.GetTableNoTracking().Where(x => x.Name.Equals(name) & !x.StudID.Equals(id)).FirstOrDefaultAsync();
+            var student = await _studentRepository.GetTableNoTracking().Where(x => x.Localize(x.NameAr, x.NameEn).Equals(name) & !x.StudID.Equals(id)).FirstOrDefaultAsync();
             if (student == null)
             {
                 return false;

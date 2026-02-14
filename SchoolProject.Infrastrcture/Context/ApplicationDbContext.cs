@@ -28,7 +28,8 @@ namespace SchoolProject.Infrastrcture.Data
     new Department
     {
         DID = 1,
-        DName = "Computer Science"
+        DNameEn = "Computer Science",
+        DNameAr = "علوم الحاسب"
     }
 );
 
@@ -37,7 +38,8 @@ namespace SchoolProject.Infrastrcture.Data
                 new Student
                 {
                     StudID = 1,
-                    Name = "Ahmed Mohamed",
+                    NameEn = "Ahmed Mohamed",
+                    NameAr = "احمد محمد",
                     Address = "Cairo",
                     Phone = "01012345678",
                     DID = 1
@@ -45,7 +47,8 @@ namespace SchoolProject.Infrastrcture.Data
                 new Student
                 {
                     StudID = 2,
-                    Name = "Sara Ali",
+                    NameEn = "Sara Ali",
+                    NameAr = "سارة علي",
                     Address = "Giza",
                     Phone = "01198765432",
                     DID = 1
