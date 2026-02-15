@@ -1,6 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using SchoolProject.Infrastrcture.IRepoistories;
-using SchoolProject.Infrastrcture.Repoistories;
 using SchoolProject.Service.Abstracts;
 using SchoolProject.Service.Implmentations;
 
