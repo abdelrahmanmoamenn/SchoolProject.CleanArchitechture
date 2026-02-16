@@ -13,7 +13,9 @@ namespace SchoolProject.Service.Abstracts
         public Task<string> Addasync(Student student);
         public Task<string> EditAsync(Student student);
         public Task<string> DeleteAsync(Student student);
-        public Task<bool> IsNameExist(string name);
-        public Task<bool> IsNameExistExcludeSelf(string name, int id);
+        public Task<bool> IsNameArExist(string name);
+        public Task<bool> IsNameArExistExcludeSelf(string name, int id);
+        public Task<bool> IsNameEnExist(string name);
+        public Task<bool> IsNameEnExistExcludeSelf(string name, int id);
     }
 }

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -21,7 +21,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SchoolProject.Data\SchoolProject.Data.csproj" />
-    <ProjectReference Include="..\SchoolProject.Infrastrcture\SchoolProject.Infrastrcture.csproj" />
+    <ProjectReference Include="..\SchoolProject.Infrastructure\SchoolProject.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
+

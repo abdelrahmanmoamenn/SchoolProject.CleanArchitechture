@@ -4,8 +4,8 @@ using Microsoft.Extensions.Options;
 using Scalar.AspNetCore;
 using SchoolProject.Core;
 using SchoolProject.Core.Middleware;
-using SchoolProject.Infrastructure;
-using SchoolProject.Infrastructure.Data;
+using SchoolProject.Infrastrcture;
+using SchoolProject.Infrastrcture.Data;
 using SchoolProject.Service;
 using System.Globalization;
 

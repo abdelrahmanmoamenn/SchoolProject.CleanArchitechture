@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using SchoolProject.Data.Entities;
 using SchoolProject.Data.Helpers;
-using SchoolProject.Infrastructure.IRepoistories;
+using SchoolProject.Infrastrcture.IRepoistories;
 using SchoolProject.Service.Abstracts;
 
 namespace SchoolProject.Service.Implmentations
@@ -102,34 +102,23 @@ namespace SchoolProject.Service.Implmentations
 
         }
 
-        public async Task<bool> IsNameEnExist(string nameEn)
+        public async Task<bool> IsNameExist(string name)
         {
-            //Check if the name is Exist Or not
-            var student = _studentRepository.GetTableNoTracking().Where(x => x.NameEn.Equals(nameEn)).FirstOrDefault();
-            if (student == null) return false;
+            var student = _studentRepository.GetTableNoTracking().Where(x => x.Localize(x.NameAr, x.NameEn).Equals(name)).FirstOrDefault();
+            if (student == null)
+            {
+                return false;
+            }
             return true;
         }
 
-        public async Task<bool> IsNameEnExistExcludeSelf(string nameEn, int id)
+        public async Task<bool> IsNameExistExcludeSelf(string name, int id)
         {
-            //Check if the name is Exist Or not
-            var student = await _studentRepository.GetTableNoTracking().Where(x => x.NameEn.Equals(nameEn) & !x.StudID.Equals(id)).FirstOrDefaultAsync();
-            if (student == null) return false;
-            return true;
-        }
-        public async Task<bool> IsNameArExist(string nameEn)
-        {
-            //Check if the name is Exist Or not
-            var student = _studentRepository.GetTableNoTracking().Where(x => x.NameAr.Equals(nameEn)).FirstOrDefault();
-            if (student == null) return false;
-            return true;
-        }
-
-        public async Task<bool> IsNameArExistExcludeSelf(string nameEn, int id)
-        {
-            //Check if the name is Exist Or not
-            var student = await _studentRepository.GetTableNoTracking().Where(x => x.NameAr.Equals(nameEn) & !x.StudID.Equals(id)).FirstOrDefaultAsync();
-            if (student == null) return false;
+            var student = await _studentRepository.GetTableNoTracking().Where(x => x.Localize(x.NameAr, x.NameEn).Equals(name) & !x.StudID.Equals(id)).FirstOrDefaultAsync();
+            if (student == null)
+            {
+                return false;
+            }
             return true;
         }
     }
