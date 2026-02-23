@@ -7,6 +7,7 @@ namespace SchoolProject.Service.Abstracts
     {
         public Task<List<Student>> GetStudentsListAsync();
         public IQueryable<Student> GetStudentQuerable();
+        public IQueryable<Student> GetStudentsByDepartmentIDQuerable(int DID);
         public IQueryable<Student> FilterStudentPaginatedQuerable(StudentOrderingEnum orderingEnum, string search);
         public Task<Student> GetStudentByIdWithIncludeAsync(int id);
         public Task<Student> GetByIdAsync(int id);

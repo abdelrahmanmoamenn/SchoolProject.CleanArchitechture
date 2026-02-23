@@ -132,6 +132,11 @@ namespace SchoolProject.Service.Implmentations
             if (student == null) return false;
             return true;
         }
+
+        public IQueryable<Student> GetStudentsByDepartmentIDQuerable(int DID)
+        {
+            return _studentRepository.GetTableNoTracking().Where(x => x.DID.Equals(DID)).AsQueryable();
+        }
     }
 }
 
