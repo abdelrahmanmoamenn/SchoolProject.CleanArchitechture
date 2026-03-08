@@ -3,7 +3,7 @@ using SchoolProject.Api.Base;
 using SchoolProject.Core.Features.Departments.Queires.Models;
 using SchoolProject.Data.AppMetaData;
 
-namespace SchoolProject.Api
+namespace SchoolProject.Api.Controllers
 {
 
     [ApiController]

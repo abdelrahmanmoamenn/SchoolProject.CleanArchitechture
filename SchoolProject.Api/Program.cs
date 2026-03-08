@@ -26,7 +26,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(option =>
 
 builder.Services.AddInfrastructureDependices()
     .AddServiceDependices()
-    .AddCoreDependices();
+    .AddCoreDependices()
+    .AddServiceRegisteration(builder.Configuration);
 
 #endregion
 

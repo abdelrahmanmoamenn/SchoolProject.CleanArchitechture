@@ -9,14 +9,16 @@ namespace SchoolProject.Core.Features.Students.Commands.Validators
     public class EditStudentCommandValidator : AbstractValidator<EditStudentCommand>
     {
         private readonly IStudentService _studentService;
+        private readonly IDepartmentService _departmentService;
         private readonly IStringLocalizer<SharedResources> _localizer;
 
-        public EditStudentCommandValidator(IStudentService studentService, IStringLocalizer<SharedResources> localizer)
+        public EditStudentCommandValidator(IStudentService studentService, IStringLocalizer<SharedResources> localizer, IDepartmentService departmentService)
         {
             _studentService = studentService;
             _localizer = localizer;
             ApplyValidtionRules();
             ApplyCustomValidtionRules();
+            _departmentService = departmentService;
         }
 
         public void ApplyValidtionRules()
@@ -40,6 +42,9 @@ namespace SchoolProject.Core.Features.Students.Commands.Validators
                 .NotEmpty().WithMessage(_localizer[SharedResourcesKeys.NotEmpty])
                 .NotNull().WithMessage(_localizer[SharedResourcesKeys.Required])
                 .MaximumLength(100).WithMessage(_localizer[SharedResourcesKeys.MaxLengthis100]);
+            RuleFor(x => x.DepartmentId)
+                .NotEmpty().WithMessage(_localizer[SharedResourcesKeys.NotEmpty])
+                .NotNull().WithMessage(_localizer[SharedResourcesKeys.Required]);
         }
 
         public void ApplyCustomValidtionRules()
@@ -51,6 +56,9 @@ namespace SchoolProject.Core.Features.Students.Commands.Validators
             RuleFor(x => x.NameAr)
                 .MustAsync(async (model, Key, CancellationToken) => !await _studentService.IsNameArExistExcludeSelf(Key, model.Id))
                 .WithMessage(_localizer[SharedResourcesKeys.IsExist]);
+            RuleFor(x => x.DepartmentId)
+          .MustAsync(async (Key, CancellationToken) => await _departmentService.IsDepartmentIdExist(Key))
+          .WithMessage(_localizer[SharedResourcesKeys.IsNotExist]);
         }
     }
 }

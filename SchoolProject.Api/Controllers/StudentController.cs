@@ -4,7 +4,7 @@ using SchoolProject.Core.Features.Students.Commands.Models;
 using SchoolProject.Core.Features.Students.Queires.Models;
 using SchoolProject.Data.AppMetaData;
 
-namespace SchoolProject.Api
+namespace SchoolProject.Api.Controllers
 {
     [ApiController]
     public class StudentController : AppControllerBase
