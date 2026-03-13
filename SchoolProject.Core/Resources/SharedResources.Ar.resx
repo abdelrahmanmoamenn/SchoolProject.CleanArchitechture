@@ -198,6 +198,9 @@
   <data name="Name" xml:space="preserve">
     <value>الاسم</value>
   </data>
+  <data name="NewPasswordSameAsCurrent" xml:space="preserve">
+    <value>كلمة المرور الجديده يجب ان تكون مختلفه عن كلمة المرور القديمه</value>
+  </data>
   <data name="NoImage" xml:space="preserve">
     <value>من فضلك قم بإختيار صورة</value>
   </data>

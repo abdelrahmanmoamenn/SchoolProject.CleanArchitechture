@@ -10,9 +10,9 @@ namespace SchoolProject.Api.Controllers
     public class ApplicationUserController : AppControllerBase
     {
         [HttpPost(Router.ApplicationUserRoute.Create)]
-        public async Task<IActionResult> Create([FromBody] AddUserCommand student)
+        public async Task<IActionResult> Create([FromBody] AddUserCommand user)
         {
-            var res = await _Mediator.Send(student);
+            var res = await _Mediator.Send(user);
             return NewResult(res);
 
         }
@@ -29,6 +29,27 @@ namespace SchoolProject.Api.Controllers
         public async Task<IActionResult> GetUserByID([FromRoute] int id)
         {
             var res = await _Mediator.Send(new GetUserByIdQuery(id));
+            return NewResult(res);
+
+        }
+        [HttpPut(Router.ApplicationUserRoute.Edit)]
+        public async Task<IActionResult> Edit([FromBody] EditUserCommand user)
+        {
+            var res = await _Mediator.Send(user);
+            return NewResult(res);
+
+        }
+        [HttpPut(Router.ApplicationUserRoute.ChangePassword)]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangeUserPasswordCommand passwordCommand)
+        {
+            var res = await _Mediator.Send(passwordCommand);
+            return NewResult(res);
+
+        }
+        [HttpDelete(Router.ApplicationUserRoute.Delete)]
+        public async Task<IActionResult> Delete([FromRoute] int id)
+        {
+            var res = await _Mediator.Send(new DeleteUserCommand(id));
             return NewResult(res);
 
         }

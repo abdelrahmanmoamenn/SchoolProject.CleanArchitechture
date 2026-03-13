@@ -198,6 +198,9 @@
   <data name="Name" xml:space="preserve">
     <value>Name</value>
   </data>
+  <data name="NewPasswordSameAsCurrent" xml:space="preserve">
+    <value>New Password Must be Different from Current Password</value>
+  </data>
   <data name="NoImage" xml:space="preserve">
     <value>Please Select Image</value>
   </data>
