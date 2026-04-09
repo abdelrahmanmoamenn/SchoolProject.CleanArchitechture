@@ -1,24 +1,24 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging;
 using SchoolProject.Core.Bases;
 using SchoolProject.Core.Features.Authentication.Commands.Models;
 using SchoolProject.Core.Resources;
 using SchoolProject.Data.Entities.Identity;
+using SchoolProject.Data.Helpers;
 using SchoolProject.Service.Abstracts;
 
 namespace SchoolProject.Core.Features.Authentication.Commands.Handlers
 {
     public class AuthenticationCommandHandler : ResponseHandler,
-                                                 IRequestHandler<SignInCommand, Response<string>>
+                                                 IRequestHandler<SignInCommand, Response<JwtAuthResult>>,
+                                                 IRequestHandler<RefreshTokenCommand, Response<JwtAuthResult>>
     {
         #region Fields
         private readonly IStringLocalizer<SharedResources> _stringLocalizer;
         private readonly SignInManager<User> _signInManager;
         private readonly IAuthenticationService _authenticationService;
         private readonly UserManager<User> _userManager;
-        private readonly ILogger<AuthenticationCommandHandler> _logger;
 
 
         #endregion
@@ -27,14 +27,14 @@ namespace SchoolProject.Core.Features.Authentication.Commands.Handlers
         public AuthenticationCommandHandler(IStringLocalizer<SharedResources> stringLocalizer,
                                             SignInManager<User> signInManager,
                                             IAuthenticationService authenticationService,
-                                            UserManager<User> userManager,
-                                            ILogger<AuthenticationCommandHandler> logger) : base(stringLocalizer)
+                                            UserManager<User> userManager
+                                           ) : base(stringLocalizer)
         {
             _stringLocalizer = stringLocalizer;
             _signInManager = signInManager;
             _authenticationService = authenticationService;
             _userManager = userManager;
-            _logger = logger;
+
         }
 
 
@@ -43,47 +43,44 @@ namespace SchoolProject.Core.Features.Authentication.Commands.Handlers
         #endregion
 
         #region Handlers
-        public async Task<Response<string>> Handle(SignInCommand request, CancellationToken cancellationToken)
+        public async Task<Response<JwtAuthResult>> Handle(SignInCommand request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Sign-in attempt for user: {UserName}", request.UserName);
-
             //Check if user is exist or not
             var user = await _userManager.FindByNameAsync(request.UserName);
             //Return The UserName Not Found
-            if (user == null)
-            {
-                _logger.LogWarning("User not found: {UserName}", request.UserName);
-                return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.UserNameIsNotExist]);
-            }
-
-            _logger.LogInformation("User found: {UserId}, Email: {Email}, EmailConfirmed: {EmailConfirmed}", user.Id, user.Email, user.EmailConfirmed);
-
-            //try to sign in
+            if (user == null) return BadRequest<JwtAuthResult>(_stringLocalizer[SharedResourcesKeys.UserNameIsNotExist]);
+            //try To Sign in 
             var signInResult = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
-
-            //if Failed Return Password is wrong
-            if (!signInResult.Succeeded)
-            {
-                _logger.LogWarning("Password verification failed for user: {UserName}. IsLockedOut: {IsLockedOut}, IsNotAllowed: {IsNotAllowed}, RequiresTwoFactor: {RequiresTwoFactor}",
-                    request.UserName, signInResult.IsLockedOut, signInResult.IsNotAllowed, signInResult.RequiresTwoFactor);
-                return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.PasswordNotCorrect]);
-            }
-
+            //if Failed Return Passord is wrong
+            if (!signInResult.Succeeded) return BadRequest<JwtAuthResult>(_stringLocalizer[SharedResourcesKeys.PasswordNotCorrect]);
             //confirm email
             if (!user.EmailConfirmed)
-            {
-                _logger.LogWarning("Email not confirmed for user: {UserName}", request.UserName);
-                return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.EmailNotConfirmed]);
-            }
-
+                return BadRequest<JwtAuthResult>(_stringLocalizer[SharedResourcesKeys.EmailNotConfirmed]);
             //Generate Token
-            _logger.LogInformation("Generating JWT token for user: {UserName}", request.UserName);
             var result = await _authenticationService.GetJWTToken(user);
-
             //return Token 
-            _logger.LogInformation("Sign-in successful for user: {UserName}", request.UserName);
             return Success(result);
+        }
 
+        public async Task<Response<JwtAuthResult>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
+        {
+            var jwtToken = _authenticationService.ReadJWTToken(request.AccessToken);
+            var userIdAndExpireDate = await _authenticationService.ValidateDetails(jwtToken, request.AccessToken, request.RefreshToken);
+            switch (userIdAndExpireDate)
+            {
+                case ("AlgorithmIsWrong", null): return Unauthorized<JwtAuthResult>(_stringLocalizer[SharedResourcesKeys.AlgorithmIsWrong]);
+                case ("TokenIsNotExpired", null): return Unauthorized<JwtAuthResult>(_stringLocalizer[SharedResourcesKeys.TokenIsNotExpired]);
+                case ("RefreshTokenIsNotFound", null): return Unauthorized<JwtAuthResult>(_stringLocalizer[SharedResourcesKeys.RefreshTokenIsNotFound]);
+                case ("RefreshTokenIsExpired", null): return Unauthorized<JwtAuthResult>(_stringLocalizer[SharedResourcesKeys.RefreshTokenIsExpired]);
+            }
+            var (userId, expiryDate) = userIdAndExpireDate;
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound<JwtAuthResult>();
+            }
+            var result = await _authenticationService.GetRefreshToken(user, jwtToken, expiryDate, request.RefreshToken);
+            return Success(result);
         }
         #endregion
 

@@ -4,6 +4,7 @@ using SchoolProject.Infrastructure.IRepoistories;
 using SchoolProject.Infrastructure.IRepositories;
 using SchoolProject.Infrastructure.Repoistories;
 using SchoolProject.Infrastructure.Repositories;
+using SchoolProject.Infrustructure.Repositories;
 
 namespace SchoolProject.Infrastructure
 {
@@ -15,6 +16,7 @@ namespace SchoolProject.Infrastructure
             services.AddTransient<IDepartmentRepository, DepartmentRepository>();
             services.AddTransient<IInstructorsRepository, InstructorsRepository>();
             services.AddTransient<ISubjectRepository, SubjectRepository>();
+            services.AddTransient<IRefreshTokenRepository, RefreshTokenRepository>();
             services.AddTransient(typeof(IGenericRepositoryAsync<>), typeof(GenericRepositoryAsync<>));
             return services;
         }
