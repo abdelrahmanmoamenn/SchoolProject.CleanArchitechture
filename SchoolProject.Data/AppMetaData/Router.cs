@@ -42,5 +42,11 @@
             public const string ChangePassword = Prefix + "Change-Password/";
             public const string Delete = Prefix + singleRoute;
         }
+
+        public static class Authentication
+        {
+            public const string Prefix = rule + "ApplicationUser/";
+            public const string SignIn = Prefix + "SignIn/";
+        }
     }
 }

@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Logging;
 using SchoolProject.Core.Bases;
 using SchoolProject.Core.Features.Users.Commands.Models;
 using SchoolProject.Core.Resources;
@@ -20,52 +21,69 @@ namespace SchoolProject.Core.Features.Users.Commands.Handlers
         private readonly IMapper _mapper;
         private readonly IStringLocalizer<SharedResources> _localizer;
         private readonly UserManager<User> _userManager;
-        //private readonly IHttpContextAccessor _httpContextAccessor;
-        //private readonly IEmailsService _emailsService;
-        //private readonly IApplicationUserService _applicationUserService;
+        private readonly ILogger<UserCommandHandler> _logger;
         #endregion
 
         #region Constructors
         public UserCommandHandler(IStringLocalizer<SharedResources> stringLocalizer,
-                                  IMapper mapper, UserManager<User> userManager) : base(stringLocalizer)
-
-        //IHttpContextAccessor httpContextAccessor,
-        //IEmailsService emailsService,
-        //IApplicationUserService applicationUserService) : base(stringLocalizer)
+                                  IMapper mapper, UserManager<User> userManager,
+                                  ILogger<UserCommandHandler> logger) : base(stringLocalizer)
         {
             _mapper = mapper;
             _localizer = stringLocalizer;
             _userManager = userManager;
-            //_httpContextAccessor = httpContextAccessor;
-            //_emailsService = emailsService;
-            //_applicationUserService = applicationUserService;
+            _logger = logger;
         }
-
 
         #endregion
 
         #region Handle Functions
         public async Task<Response<string>> Handle(AddUserCommand request, CancellationToken cancellationToken)
         {
+            try
+            {
+                _logger.LogInformation("Starting user creation for: {UserName}", request.UserName);
 
-            var userEmail = await _userManager.FindByEmailAsync(request.Email);
-            if (userEmail != null)
-            {
-                return BadRequest<string>(_localizer[SharedResourcesKeys.EmailIsExist]);
-            }
-            var userName = await _userManager.FindByNameAsync(request.UserName);
-            if (userName != null)
-            {
-                return BadRequest<string>(_localizer[SharedResourcesKeys.UserNameIsExist]);
-            }
-            var user = _mapper.Map<User>(request);
-            var result = await _userManager.CreateAsync(user, request.Password);
-            if (!result.Succeeded)
-            {
-                return BadRequest<string>(string.Join(", ", result.Errors.Select(e => e.Description)));
-            }
-            return Created("");
+                var userEmail = await _userManager.FindByEmailAsync(request.Email);
+                if (userEmail != null)
+                {
+                    _logger.LogWarning("Email already exists: {Email}", request.Email);
+                    return BadRequest<string>(_localizer[SharedResourcesKeys.EmailIsExist]);
+                }
 
+                var userName = await _userManager.FindByNameAsync(request.UserName);
+                if (userName != null)
+                {
+                    _logger.LogWarning("Username already exists: {UserName}", request.UserName);
+                    return BadRequest<string>(_localizer[SharedResourcesKeys.UserNameIsExist]);
+                }
+
+                _logger.LogInformation("Mapping AddUserCommand to User entity");
+                var user = _mapper.Map<User>(request);
+
+                _logger.LogInformation("User mapped successfully. Properties: FullName={FullName}, UserName={UserName}, Email={Email}, EmailConfirmed={EmailConfirmed}",
+                    user.FullName, user.UserName, user.Email, user.EmailConfirmed);
+
+                user.EmailConfirmed = true;
+
+                _logger.LogInformation("Creating user with UserManager");
+                var result = await _userManager.CreateAsync(user, request.Password);
+
+                if (!result.Succeeded)
+                {
+                    var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                    _logger.LogError("User creation failed: {Errors}", errors);
+                    return BadRequest<string>(errors);
+                }
+
+                _logger.LogInformation("User created successfully: {UserName}", request.UserName);
+                return Created("");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Exception occurred during user creation: {Message}", ex.Message);
+                return BadRequest<string>($"Error: {ex.Message}");
+            }
         }
 
         public async Task<Response<string>> Handle(EditUserCommand request, CancellationToken cancellationToken)
@@ -123,7 +141,6 @@ namespace SchoolProject.Core.Features.Users.Commands.Handlers
                 return BadRequest<string>(string.Join(", ", result.Errors.Select(e => e.Description)));
             }
             return Success<string>(_localizer[SharedResourcesKeys.Updated]);
-
         }
         #endregion
     }
