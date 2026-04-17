@@ -17,7 +17,7 @@
             public const string GetByID = prefix + singleRoute;
             public const string Create = prefix + "Create/";
             public const string Edit = prefix + "Edit/";
-            public const string Delete = prefix + singleRoute;
+            public const string Delete = prefix + "Delete/" + singleRoute;
             public const string Paginated = prefix + "Paginated/";
 
 
@@ -40,15 +40,26 @@
             public const string GetByID = Prefix + singleRoute;
             public const string Edit = Prefix + "Edit/";
             public const string ChangePassword = Prefix + "Change-Password/";
-            public const string Delete = Prefix + singleRoute;
+            public const string Delete = Prefix + "Delete/" + singleRoute;
         }
 
         public static class Authentication
         {
-            public const string Prefix = rule + "ApplicationUser/";
+            public const string Prefix = rule + "Authentication/";
             public const string SignIn = Prefix + "SignIn/";
             public const string RefreshToken = Prefix + "Refresh-Token/";
             public const string ValidateToken = Prefix + "Validate-Token/";
+        }
+        public static class Authorization
+        {
+            public const string Prefix = rule + "Authorization/";
+            public const string Create = Prefix + "Create-Role/";
+            public const string Edit = Prefix + "Edit-Role/";
+            public const string Delete = Prefix + "Delete-Role/" + singleRoute;
+            public const string GetByID = Prefix + "Role-Id/" + singleRoute;
+            public const string List = Prefix + "Role-List/";
+            public const string ManageUserRoles = Prefix + "Manage-User-Roles/" + singleRoute;
+            public const string UpdateUserRoles = Prefix + "Update-User-Roles/";
         }
     }
 }

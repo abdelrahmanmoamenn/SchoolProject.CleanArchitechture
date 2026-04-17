@@ -1,0 +1,42 @@
+services:
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: school_sqlserver
+    environment:
+      SA_PASSWORD: "School@Pass123!"
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Developer"
+    ports:
+      - "1433:1433"          # SQL Server default port
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL",
+             "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'School@Pass123!' -Q 'SELECT 1' -No"]
+      interval: 10s
+      retries: 10
+      start_period: 30s
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: school_api
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ASPNETCORE_URLS: "http://+:8080"
+      ConnectionStrings__SchoolDb: >
+        Server=sqlserver,1433;Database=SchoolDb;
+        User Id=sa;Password=School@Pass123!;
+        TrustServerCertificate=True;
+        MultipleActiveResultSets=true
+    ports:
+      - "8888:8080"          # http://localhost:6000
+    restart: on-failure
+
+volumes:
+  sqlserver_data:

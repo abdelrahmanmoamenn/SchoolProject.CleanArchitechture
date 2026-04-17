@@ -76,6 +76,8 @@ namespace SchoolProject.Core.Features.Users.Commands.Handlers
                     return BadRequest<string>(errors);
                 }
 
+                await _userManager.AddToRoleAsync(user, "User");
+
                 _logger.LogInformation("User created successfully: {UserName}", request.UserName);
                 return Created("");
             }

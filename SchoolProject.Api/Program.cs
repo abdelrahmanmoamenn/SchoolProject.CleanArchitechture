@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -5,8 +6,10 @@ using Microsoft.OpenApi.Models;
 using Scalar.AspNetCore;
 using SchoolProject.Core;
 using SchoolProject.Core.Middleware;
+using SchoolProject.Data.Entities.Identity;
 using SchoolProject.Infrastructure;
 using SchoolProject.Infrastructure.Data;
+using SchoolProject.Infrastructure.Seeder;
 using SchoolProject.Service;
 using System.Globalization;
 
@@ -107,11 +110,18 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
+    await RoleSeeder.SeedAsync(roleManager);
+    await UserSeeder.SeedAsync(userManager);
+}
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-    app.MapScalarApiReference();
+    app.MapScalarApiReference().AllowAnonymous();
 
 }
 
@@ -124,13 +134,23 @@ app.UseRequestLocalization(options.Value);
 
 app.UseMiddleware<ErrorHandlerMiddleware>();
 
-app.UseHttpsRedirection();
+if (!app.Environment.IsProduction())
+{
+    app.UseHttpsRedirection();
+}
 app.UseCors(CORS);
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider
+                  .GetRequiredService<ApplicationDbContext>();
+    db.Database.Migrate();   // creates the DB + applies all pending migrations
+}
 
 app.Run();
 
