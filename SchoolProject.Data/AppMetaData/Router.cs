@@ -49,17 +49,29 @@
             public const string SignIn = Prefix + "SignIn/";
             public const string RefreshToken = Prefix + "Refresh-Token/";
             public const string ValidateToken = Prefix + "Validate-Token/";
+            public const string ConfirmEmail = "/Api/Authentication/ConfirmEmail";
         }
         public static class Authorization
         {
             public const string Prefix = rule + "Authorization/";
-            public const string Create = Prefix + "Create-Role/";
-            public const string Edit = Prefix + "Edit-Role/";
-            public const string Delete = Prefix + "Delete-Role/" + singleRoute;
-            public const string GetByID = Prefix + "Role-Id/" + singleRoute;
-            public const string List = Prefix + "Role-List/";
-            public const string ManageUserRoles = Prefix + "Manage-User-Roles/" + singleRoute;
-            public const string UpdateUserRoles = Prefix + "Update-User-Roles/";
+            public const string Roles = Prefix + "Roles/";
+            public const string Claims = Prefix + "Claims/";
+
+            public const string Create = Roles + "Create/";
+            public const string Edit = Roles + "Edit/";
+            public const string Delete = Roles + "Delete/" + singleRoute;
+            public const string GetByID = Roles + "GetByID/" + singleRoute;
+            public const string List = Roles + "List/";
+            public const string ManageUserRoles = Roles + "Manage-User-Roles/" + singleRoute;
+            public const string UpdateUserRoles = Roles + "Update-User-Roles/";
+            public const string ManageUserClaims = Claims + "Manage-User-Claims/" + singleRoute;
+            public const string UpdateUserClaims = Claims + "Update-User-Claims/";
+
+        }
+        public static class Emails
+        {
+            public const string Prefix = rule + "Emails/";
+            public const string SendEmail = Prefix + "SendEmail/";
         }
     }
 }

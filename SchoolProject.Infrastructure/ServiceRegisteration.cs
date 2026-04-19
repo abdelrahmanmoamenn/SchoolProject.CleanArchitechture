@@ -40,9 +40,11 @@ namespace SchoolProject.Infrastructure
 
             //JWT Authentication
             var jwtSettings = new JwtSettings();
+            var emailSettings = new EmailSettings();
+            configuration.GetSection(nameof(emailSettings)).Bind(emailSettings);
             configuration.GetSection(nameof(jwtSettings)).Bind(jwtSettings);
 
-
+            services.AddSingleton(emailSettings);
             services.AddSingleton(jwtSettings);
 
 
@@ -99,21 +101,21 @@ namespace SchoolProject.Infrastructure
             //});
             // });
 
-            // services.AddAuthorization(option =>
-            // {
-            //     option.AddPolicy("CreateStudent", policy =>
-            //     {
-            //         policy.RequireClaim("Create Student", "True");
-            //     });
-            //     option.AddPolicy("DeleteStudent", policy =>
-            //     {
-            //         policy.RequireClaim("Delete Student", "True");
-            //     });
-            //     option.AddPolicy("EditStudent", policy =>
-            //     {
-            //         policy.RequireClaim("Edit Student", "True");
-            //     });
-            // });
+            services.AddAuthorization(option =>
+            {
+                option.AddPolicy("CreateStudent", policy =>
+                {
+                    policy.RequireClaim("Create Student", "True");
+                });
+                option.AddPolicy("DeleteStudent", policy =>
+                {
+                    policy.RequireClaim("Delete Student", "True");
+                });
+                option.AddPolicy("EditStudent", policy =>
+                {
+                    policy.RequireClaim("Edit Student", "True");
+                });
+            });
 
 
 

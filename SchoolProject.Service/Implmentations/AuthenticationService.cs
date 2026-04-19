@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SchoolProject.Data.Entities.Identity;
 using SchoolProject.Data.Helpers;
+using SchoolProject.Data.Results;
 using SchoolProject.Infrastructure.IRepositories;
 using SchoolProject.Service.Abstracts;
 using System.IdentityModel.Tokens.Jwt;
@@ -231,6 +232,17 @@ namespace SchoolProject.Service.Implmentations
             }
             var expirydate = userRefreshToken.ExpiryDate;
             return (userId, expirydate);
+        }
+
+        public async Task<string> ConfirmEmail(int? userId, string? code)
+        {
+            if (userId == null || code == null)
+                return "ErrorWhenConfirmEmail";
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            var confirmEmail = await _userManager.ConfirmEmailAsync(user, code);
+            if (!confirmEmail.Succeeded)
+                return "ErrorWhenConfirmEmail";
+            return "Success";
         }
 
 

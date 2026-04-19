@@ -2,7 +2,7 @@
 
 namespace SchoolProject.Data.Requests
 {
-    public class UpdateUserRolesRequest : ManageUserRolesResult
+    public class UpdateUserClaimsRequest : ManageUserClaimsResult
     {
     }
 }

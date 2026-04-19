@@ -1,6 +1,6 @@
-﻿namespace SchoolProject.Data.Requests
+﻿namespace SchoolProject.Data.Results
 {
-    public class ManageUserRolesDto
+    public class ManageUserRolesResult
     {
         public int UserId { get; set; }
         public string UserName { get; set; }

@@ -1,5 +1,5 @@
 ﻿using SchoolProject.Data.Entities.Identity;
-using SchoolProject.Data.Helpers;
+using SchoolProject.Data.Results;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace SchoolProject.Service.Abstracts
@@ -11,5 +11,6 @@ namespace SchoolProject.Service.Abstracts
         public Task<(string, DateTime?)> ValidateDetails(JwtSecurityToken jwtToken, string AccessToken, string RefreshToken);
         public Task<JwtAuthResult> GetRefreshToken(User user, JwtSecurityToken jwtToken, DateTime? expiryDate, string refreshToken);
         public Task<string> ValidateToken(string AccessToken);
+        public Task<string> ConfirmEmail(int? userId, string? code);
     }
 }

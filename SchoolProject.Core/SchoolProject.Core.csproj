@@ -31,10 +31,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\Authentication\Queries\Validators\" />
     <Folder Include="Features\Departments\Commands\Handlers\" />
     <Folder Include="Features\Departments\Commands\Models\" />
     <Folder Include="Features\Departments\Commands\Validators\" />
+    <Folder Include="Features\Emails\Queries\" />
     <Folder Include="Mapping\Departments\CommandMapping\" />
   </ItemGroup>
 

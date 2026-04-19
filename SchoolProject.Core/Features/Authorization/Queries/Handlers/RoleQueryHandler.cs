@@ -7,7 +7,7 @@ using SchoolProject.Core.Features.Authorization.Queries.DTO;
 using SchoolProject.Core.Features.Authorization.Queries.Models;
 using SchoolProject.Core.Resources;
 using SchoolProject.Data.Entities.Identity;
-using SchoolProject.Data.Requests;
+using SchoolProject.Data.Results;
 using SchoolProject.Service.Abstracts;
 
 namespace SchoolProject.Core.Features.Authorization.Queries.Handlers
@@ -15,7 +15,7 @@ namespace SchoolProject.Core.Features.Authorization.Queries.Handlers
     public class RoleQueryHandler : ResponseHandler,
                                     IRequestHandler<GetRolesListQuery, Response<List<GetRolesListDto>>>,
                                     IRequestHandler<GetRoleByIdQuery, Response<GetRoleByIdDto>>,
-                                    IRequestHandler<ManageUserRolesQuery, Response<ManageUserRolesDto>>
+                                    IRequestHandler<ManageUserRolesQuery, Response<ManageUserRolesResult>>
 
 
     {
@@ -54,11 +54,11 @@ namespace SchoolProject.Core.Features.Authorization.Queries.Handlers
             return Success(mappedRole);
         }
 
-        public async Task<Response<ManageUserRolesDto>> Handle(ManageUserRolesQuery request, CancellationToken cancellationToken)
+        public async Task<Response<ManageUserRolesResult>> Handle(ManageUserRolesQuery request, CancellationToken cancellationToken)
         {
             var user = await _userManager.FindByIdAsync(request.UserId.ToString());
             if (user == null)
-                return NotFound<ManageUserRolesDto>(_stringLocalizer[SharedResourcesKeys.UserIsNotFound]);
+                return NotFound<ManageUserRolesResult>(_stringLocalizer[SharedResourcesKeys.UserIsNotFound]);
             var userRoles = await _authorizationService.ManageUserRolesAsync(user);
             return Success(userRoles);
         }

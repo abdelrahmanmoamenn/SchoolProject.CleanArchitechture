@@ -8,6 +8,7 @@ using SchoolProject.Core.Bases;
 using SchoolProject.Core.Features.Users.Commands.Models;
 using SchoolProject.Core.Resources;
 using SchoolProject.Data.Entities.Identity;
+using SchoolProject.Service.Abstracts;
 
 namespace SchoolProject.Core.Features.Users.Commands.Handlers
 {
@@ -22,17 +23,19 @@ namespace SchoolProject.Core.Features.Users.Commands.Handlers
         private readonly IStringLocalizer<SharedResources> _localizer;
         private readonly UserManager<User> _userManager;
         private readonly ILogger<UserCommandHandler> _logger;
+        private readonly IApplicationUserService _applicationUserService;
         #endregion
 
         #region Constructors
         public UserCommandHandler(IStringLocalizer<SharedResources> stringLocalizer,
-                                  IMapper mapper, UserManager<User> userManager,
+                                  IMapper mapper, UserManager<User> userManager, IApplicationUserService applicationUserService,
                                   ILogger<UserCommandHandler> logger) : base(stringLocalizer)
         {
             _mapper = mapper;
             _localizer = stringLocalizer;
             _userManager = userManager;
             _logger = logger;
+            _applicationUserService = applicationUserService;
         }
 
         #endregion
@@ -40,51 +43,17 @@ namespace SchoolProject.Core.Features.Users.Commands.Handlers
         #region Handle Functions
         public async Task<Response<string>> Handle(AddUserCommand request, CancellationToken cancellationToken)
         {
-            try
+            var identityUser = _mapper.Map<User>(request);
+            //Create
+            var createResult = await _applicationUserService.AddUserAsync(identityUser, request.Password);
+            switch (createResult)
             {
-                _logger.LogInformation("Starting user creation for: {UserName}", request.UserName);
-
-                var userEmail = await _userManager.FindByEmailAsync(request.Email);
-                if (userEmail != null)
-                {
-                    _logger.LogWarning("Email already exists: {Email}", request.Email);
-                    return BadRequest<string>(_localizer[SharedResourcesKeys.EmailIsExist]);
-                }
-
-                var userName = await _userManager.FindByNameAsync(request.UserName);
-                if (userName != null)
-                {
-                    _logger.LogWarning("Username already exists: {UserName}", request.UserName);
-                    return BadRequest<string>(_localizer[SharedResourcesKeys.UserNameIsExist]);
-                }
-
-                _logger.LogInformation("Mapping AddUserCommand to User entity");
-                var user = _mapper.Map<User>(request);
-
-                _logger.LogInformation("User mapped successfully. Properties: FullName={FullName}, UserName={UserName}, Email={Email}, EmailConfirmed={EmailConfirmed}",
-                    user.FullName, user.UserName, user.Email, user.EmailConfirmed);
-
-                user.EmailConfirmed = true;
-
-                _logger.LogInformation("Creating user with UserManager");
-                var result = await _userManager.CreateAsync(user, request.Password);
-
-                if (!result.Succeeded)
-                {
-                    var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-                    _logger.LogError("User creation failed: {Errors}", errors);
-                    return BadRequest<string>(errors);
-                }
-
-                await _userManager.AddToRoleAsync(user, "User");
-
-                _logger.LogInformation("User created successfully: {UserName}", request.UserName);
-                return Created("");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Exception occurred during user creation: {Message}", ex.Message);
-                return BadRequest<string>($"Error: {ex.Message}");
+                case "EmailIsExist": return BadRequest<string>(_localizer[SharedResourcesKeys.EmailIsExist]);
+                case "UserNameIsExist": return BadRequest<string>(_localizer[SharedResourcesKeys.UserNameIsExist]);
+                case "ErrorInCreateUser": return BadRequest<string>(_localizer[SharedResourcesKeys.FaildToAddUser]);
+                case "Failed": return BadRequest<string>(_localizer[SharedResourcesKeys.TryToRegisterAgain]);
+                case "Success": return Success<string>("");
+                default: return BadRequest<string>(createResult);
             }
         }
 
