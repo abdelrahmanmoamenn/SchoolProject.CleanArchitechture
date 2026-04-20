@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using EntityFrameworkCore.EncryptColumn.Interfaces;
+using EntityFrameworkCore.EncryptColumn.Util;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SchoolProject.Data.Entities.Identity;
 using SchoolProject.Data.Helpers;
 using SchoolProject.Data.Results;
+using SchoolProject.Infrastructure.Data;
 using SchoolProject.Infrastructure.IRepositories;
 using SchoolProject.Service.Abstracts;
 using System.IdentityModel.Tokens.Jwt;
@@ -19,24 +22,24 @@ namespace SchoolProject.Service.Implmentations
         private readonly JwtSettings _jwtSettings;
         private readonly IRefreshTokenRepository _refreshTokenRepository;
         private readonly UserManager<User> _userManager;
-        //private readonly IEmailsService _emailsService;
-        //private readonly ApplicationDBContext _applicationDBContext;
-        //private readonly IEncryptionProvider _encryptionProvider;
+        private readonly IEmailsService _emailsService;
+        private readonly ApplicationDbContext _applicationDBContext;
+        private readonly IEncryptionProvider _encryptionProvider;
         #endregion 
 
         #region Constructors
         public AuthenticationService(JwtSettings jwtSettings,
                                      IRefreshTokenRepository refreshTokenRepository,
-                                     UserManager<User> userManager)
-        //IEmailsService emailsService,
-        //ApplicationDBContext applicationDBContext)
+                                     UserManager<User> userManager,
+        IEmailsService emailsService,
+        ApplicationDbContext applicationDBContext)
         {
             _jwtSettings = jwtSettings;
             _refreshTokenRepository = refreshTokenRepository;
             _userManager = userManager;
-            //_emailsService = emailsService;
-            //_applicationDBContext = applicationDBContext;
-            //_encryptionProvider = new GenerateEncryptionProvider("8a4dcaaec64d412380fe4b02193cd26f");
+            _emailsService = emailsService;
+            _applicationDBContext = applicationDBContext;
+            _encryptionProvider = new GenerateEncryptionProvider("8a4dcaaec64d412380fe4b02193cd26f");
         }
 
 
@@ -243,6 +246,54 @@ namespace SchoolProject.Service.Implmentations
             if (!confirmEmail.Succeeded)
                 return "ErrorWhenConfirmEmail";
             return "Success";
+        }
+
+        public async Task<string> SendResetPasswordCode(string Email)
+        {
+            var trans = await _applicationDBContext.Database.BeginTransactionAsync();
+            try
+            {
+                //user
+                var user = await _userManager.FindByEmailAsync(Email);
+                //user not Exist => not found
+                if (user == null)
+                    return "UserNotFound";
+                //Generate Randome Number
+
+                var chars = "0123456789";
+                var randome = new Random();
+                var randomeNumber = new string(Enumerable.Repeat(chars, 6).Select(s => s[randome.Next(s.Length)]).ToArray());
+
+                //update User In Database Code
+                user.Code = randomeNumber;
+                var updateResult = await _userManager.UpdateAsync(user);
+                if (!updateResult.Succeeded)
+                    return "ErrorInUpdateUser";
+                var message = "Code To Reset Passsword : " + user.Code;
+                //Send Code To  Email 
+                await _emailsService.SendEmail(user.Email, message, "Reset Password");
+                await trans.CommitAsync();
+                return "Success";
+            }
+            catch (Exception ex)
+            {
+                await trans.RollbackAsync();
+                return "Failed";
+            }
+        }
+
+        public async Task<string> ConfirmResetPassword(string Code, string Email)
+        {
+            var user = await _userManager.FindByEmailAsync(Email);
+            //user not Exist => not found
+            if (user == null)
+                return "UserNotFound";
+            //Decrypt Code From Database User Code
+            var userCode = user.Code;
+            //Equal With Code
+            if (userCode == Code) return "Success";
+            return "Failed";
+
         }
 
 

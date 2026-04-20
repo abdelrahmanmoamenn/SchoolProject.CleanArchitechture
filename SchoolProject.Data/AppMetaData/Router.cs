@@ -50,6 +50,8 @@
             public const string RefreshToken = Prefix + "Refresh-Token/";
             public const string ValidateToken = Prefix + "Validate-Token/";
             public const string ConfirmEmail = "/Api/Authentication/ConfirmEmail";
+            public const string SendResetPasswordCode = Prefix + "Send-Reset-Password-Code/";
+            public const string ConfirmResetPasswordCode = Prefix + "Confirm-Reset-Password-Code/";
         }
         public static class Authorization
         {
