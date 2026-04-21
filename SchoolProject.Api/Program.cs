@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Scalar.AspNetCore;
 using SchoolProject.Core;
+using SchoolProject.Core.Filters;
 using SchoolProject.Core.Middleware;
 using SchoolProject.Data.Entities.Identity;
 using SchoolProject.Infrastructure;
@@ -118,6 +119,8 @@ builder.Services.AddTransient<IUrlHelper>(x =>
     var factory = x.GetRequiredService<IUrlHelperFactory>();
     return factory.GetUrlHelper(actionContext);
 });
+
+builder.Services.AddTransient<AuthFilter>();
 
 var app = builder.Build();
 

@@ -296,6 +296,39 @@ namespace SchoolProject.Service.Implmentations
 
         }
 
+        public async Task<string> ResetPassword(string Email, string Password)
+        {
+            var transaction = await _applicationDBContext.Database.BeginTransactionAsync();
+            try
+            {
+                var user = await _userManager.FindByEmailAsync(Email);
+                if (user == null)
+                    return "UserNotFound";
+
+                var passwordHasher = new PasswordHasher<User>();
+                var result = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, Password);
+                if (result != PasswordVerificationResult.Failed)
+                {
+                    return "PasswordSameAsOld";
+                }
+
+                await _userManager.RemovePasswordAsync(user);
+                if (!await _userManager.HasPasswordAsync(user))
+                {
+                    var createResult = await _userManager.AddPasswordAsync(user, Password);
+                    if (!createResult.Succeeded)
+                        return string.Join(",", createResult.Errors.Select(x => x.Description).ToList());
+                }
+                await transaction.CommitAsync();
+                return "Success";
+            }
+            catch (Exception)
+            {
+                await transaction.RollbackAsync();
+                return "Failed";
+            }
+        }
+
 
         #endregion
     }

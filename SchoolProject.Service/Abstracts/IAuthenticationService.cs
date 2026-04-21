@@ -14,5 +14,6 @@ namespace SchoolProject.Service.Abstracts
         public Task<string> ConfirmEmail(int? userId, string? code);
         public Task<string> SendResetPasswordCode(string Email);
         public Task<string> ConfirmResetPassword(string Code, string Email);
+        public Task<string> ResetPassword(string Email, string Password);
     }
 }

@@ -13,7 +13,8 @@ namespace SchoolProject.Core.Features.Authentication.Commands.Handlers
     public class AuthenticationCommandHandler : ResponseHandler,
                                                  IRequestHandler<SignInCommand, Response<JwtAuthResult>>,
                                                  IRequestHandler<RefreshTokenCommand, Response<JwtAuthResult>>,
-                                                 IRequestHandler<SendResetPasswordCommand, Response<string>>
+                                                 IRequestHandler<SendResetPasswordCommand, Response<string>>,
+                                                 IRequestHandler<ResetPasswordCommand, Response<string>>
     {
         #region Fields
         private readonly IStringLocalizer<SharedResources> _stringLocalizer;
@@ -94,6 +95,18 @@ namespace SchoolProject.Core.Features.Authentication.Commands.Handlers
                 case "Failed": return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.TryAgainInAnotherTime]);
                 case "Success": return Success<string>("");
                 default: return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.TryAgainInAnotherTime]);
+            }
+        }
+
+        public async Task<Response<string>> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
+        {
+            var result = await _authenticationService.ResetPassword(request.Email, request.Password);
+            switch (result)
+            {
+                case "UserNotFound": return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.UserIsNotFound]);
+                case "Failed": return BadRequest<string>(_stringLocalizer[SharedResourcesKeys.InvaildCode]);
+                case "Success": return Success<string>("");
+                default: return BadRequest<string>(result);
             }
         }
         #endregion

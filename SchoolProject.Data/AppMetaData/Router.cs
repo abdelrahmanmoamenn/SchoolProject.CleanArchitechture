@@ -52,6 +52,7 @@
             public const string ConfirmEmail = "/Api/Authentication/ConfirmEmail";
             public const string SendResetPasswordCode = Prefix + "Send-Reset-Password-Code/";
             public const string ConfirmResetPasswordCode = Prefix + "Confirm-Reset-Password-Code/";
+            public const string ResetPassword = Prefix + "Reset-Password/";
         }
         public static class Authorization
         {
