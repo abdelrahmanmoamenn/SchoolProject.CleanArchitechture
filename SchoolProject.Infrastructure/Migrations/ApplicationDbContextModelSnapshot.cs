@@ -729,6 +729,23 @@ namespace SchoolProject.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("SchoolProject.Data.Entities.Views.ViewDepartment", b =>
+                {
+                    b.Property<int>("DID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("DNameAr")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DNameEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("StudentCount")
+                        .HasColumnType("int");
+
+                    b.ToTable("ViewDepartment");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.HasOne("SchoolProject.Data.Entities.Identity.Role", null)

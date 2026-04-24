@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.Extensions.Localization;
 using SchoolProject.Core.Bases;
+using SchoolProject.Core.Features.Department.Queries.Models;
 using SchoolProject.Core.Features.Departments.Queires.DTO;
 using SchoolProject.Core.Features.Departments.Queires.Models;
 using SchoolProject.Core.Resources;
@@ -13,9 +14,10 @@ using System.Linq.Expressions;
 namespace SchoolProject.Core.Features.Departments.Queires.Handlers
 {
     public class DepartmentQueryHandler : ResponseHandler,
-                                       IRequestHandler<GetDepartmentByIdQuery, Response<GetDepartmentByIdDTO>>
-    //IRequestHandler<GetStudentByIdQuery, Response<GetStudentDTO>>,
-    // IRequestHandler<GetStudentPaginatedListQuery, PaginatedResult<GetStudentPaginatedListDTO>>
+                                       IRequestHandler<GetDepartmentByIdQuery, Response<GetDepartmentByIdDTO>>,
+                                        IRequestHandler<GetDepartmentStudentListCountQuery, Response<List<GetDepartmentStudentListCountDTO>>>
+
+
 
     {
         #region Fields
@@ -42,14 +44,14 @@ namespace SchoolProject.Core.Features.Departments.Queires.Handlers
         #region Handle Functions
         public async Task<Response<GetDepartmentByIdDTO>> Handle(GetDepartmentByIdQuery request, CancellationToken cancellationToken)
         {
-            var responsse = await _departmentService.GetDepartmentById(request.Id);
-            if (responsse == null) return NotFound<GetDepartmentByIdDTO>(_localizer[SharedResourcesKeys.NotFound]);
+            var response = await _departmentService.GetDepartmentById(request.Id);
+            if (response == null) return NotFound<GetDepartmentByIdDTO>(_localizer[SharedResourcesKeys.NotFound]);
 
-            var mapper = _mapper.Map<GetDepartmentByIdDTO>(responsse);
+            var mapper = _mapper.Map<GetDepartmentByIdDTO>(response);
             //pagination
             Expression<Func<Student, StudentResponse>> expression = e => new StudentResponse(e.StudID, e.Localize(e.NameAr, e.NameEn));
-            var studentQuerable = _studentService.GetStudentsByDepartmentIDQuerable(request.Id);
-            var PaginatedList = await studentQuerable.Select(expression).ToPaginatedListAsync(request.StudentPageNumber, request.StudentPageSize);
+            var studentQueryable = _studentService.GetStudentsByDepartmentIDQuerable(request.Id);
+            var PaginatedList = await studentQueryable.Select(expression).ToPaginatedListAsync(request.StudentPageNumber, request.StudentPageSize);
             mapper.StudentList = PaginatedList;
 
             return Success(mapper);
@@ -57,10 +59,13 @@ namespace SchoolProject.Core.Features.Departments.Queires.Handlers
 
 
 
+        }
 
-
-
-
+        public async Task<Response<List<GetDepartmentStudentListCountDTO>>> Handle(GetDepartmentStudentListCountQuery request, CancellationToken cancellationToken)
+        {
+            var viewDepartmentResult = await _departmentService.GetViewDepartmentDataAsync();
+            var result = _mapper.Map<List<GetDepartmentStudentListCountDTO>>(viewDepartmentResult);
+            return Success(result);
         }
         #endregion
 

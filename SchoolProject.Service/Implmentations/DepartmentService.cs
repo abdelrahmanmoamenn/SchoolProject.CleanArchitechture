@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SchoolProject.Data.Entities;
+using SchoolProject.Data.Entities.Views;
 using SchoolProject.Infrastructure.IRepositories;
+using SchoolProject.Infrustructure.Abstracts.Views;
 using SchoolProject.Service.Abstracts;
 
 namespace SchoolProject.Service.Implmentations
@@ -9,12 +11,14 @@ namespace SchoolProject.Service.Implmentations
     {
         #region Fields
         public IDepartmentRepository _departmentRepository { get; set; }
+        private readonly IViewRepository<ViewDepartment> _viewDepartmentRepository;
         #endregion
 
         #region Constructors
-        public DepartmentService(IDepartmentRepository departmentRepository)
+        public DepartmentService(IDepartmentRepository departmentRepository, IViewRepository<ViewDepartment> viewDepartmentRepository)
         {
             _departmentRepository = departmentRepository;
+            _viewDepartmentRepository = viewDepartmentRepository;
         }
         #endregion
         #region Handle Functions
@@ -30,6 +34,12 @@ namespace SchoolProject.Service.Implmentations
         public async Task<bool> IsDepartmentIdExist(int id)
         {
             return await _departmentRepository.GetTableNoTracking().AnyAsync(x => x.DID.Equals(id));
+        }
+
+        public async Task<List<ViewDepartment>> GetViewDepartmentDataAsync()
+        {
+            var viewDepartment = await _viewDepartmentRepository.GetTableNoTracking().ToListAsync();
+            return viewDepartment;
         }
         #endregion
     }
