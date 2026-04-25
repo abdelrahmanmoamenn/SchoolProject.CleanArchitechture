@@ -4,7 +4,7 @@ using SchoolProject.Data.Enums;
 using SchoolProject.Infrastructure.IRepoistories;
 using SchoolProject.Service.Abstracts;
 
-namespace SchoolProject.Service.Implmentations
+namespace SchoolProject.Service.Implementations
 {
     public class StudentService : IStudentService
     {

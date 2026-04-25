@@ -2,7 +2,7 @@
 using SchoolProject.Service.Abstracts;
 using SchoolProject.Service.AuthServices.Implementations;
 using SchoolProject.Service.AuthServices.Interfaces;
-using SchoolProject.Service.Implmentations;
+using SchoolProject.Service.Implementations;
 
 namespace SchoolProject.Service
 {
@@ -17,6 +17,8 @@ namespace SchoolProject.Service
             services.AddTransient<IEmailsService, EmailsService>();
             services.AddTransient<IApplicationUserService, ApplicationUserService>();
             services.AddTransient<ICurrentUserService, CurrentUserService>();
+            services.AddTransient<IInstructorService, InstructorService>();
+            services.AddTransient<IFileService, FileService>();
             return services;
         }
     }

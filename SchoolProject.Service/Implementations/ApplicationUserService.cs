@@ -5,7 +5,7 @@ using SchoolProject.Data.Entities.Identity;
 using SchoolProject.Infrastructure.Data;
 using SchoolProject.Service.Abstracts;
 
-namespace SchoolProject.Service.Implmentations
+namespace SchoolProject.Service.Implementations
 {
     public class ApplicationUserService : IApplicationUserService
     {

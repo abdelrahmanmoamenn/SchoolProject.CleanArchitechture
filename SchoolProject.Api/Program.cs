@@ -15,6 +15,7 @@ using SchoolProject.Infrastructure;
 using SchoolProject.Infrastructure.Data;
 using SchoolProject.Infrastructure.Seeder;
 using SchoolProject.Service;
+using Serilog;
 using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -122,6 +123,11 @@ builder.Services.AddTransient<IUrlHelper>(x =>
 
 builder.Services.AddTransient<AuthFilter>();
 
+//Serilog
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration).CreateLogger();
+builder.Services.AddSerilog();
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -153,6 +159,7 @@ if (!app.Environment.IsProduction())
     app.UseHttpsRedirection();
 }
 app.UseCors(CORS);
+app.UseStaticFiles();
 
 app.UseAuthentication();
 app.UseAuthorization();

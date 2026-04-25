@@ -14,7 +14,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace SchoolProject.Service.Implmentations
+namespace SchoolProject.Service.Implementations
 {
     public class AuthenticationService : IAuthenticationService
     {

@@ -5,7 +5,7 @@ using SchoolProject.Infrastructure.IRepositories;
 using SchoolProject.Infrustructure.Abstracts.Views;
 using SchoolProject.Service.Abstracts;
 
-namespace SchoolProject.Service.Implmentations
+namespace SchoolProject.Service.Implementations
 {
     public class DepartmentService : IDepartmentService
     {

@@ -3,7 +3,7 @@ using MimeKit;
 using SchoolProject.Data.Helpers;
 using SchoolProject.Service.Abstracts;
 
-namespace SchoolProject.Service.Implmentations
+namespace SchoolProject.Service.Implementations
 {
     public class EmailsService : IEmailsService
     {

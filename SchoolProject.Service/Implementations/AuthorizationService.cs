@@ -8,7 +8,7 @@ using SchoolProject.Infrastructure.Data;
 using SchoolProject.Service.Abstracts;
 using System.Security.Claims;
 
-namespace SchoolProject.Service.Implmentations
+namespace SchoolProject.Service.Implementations
 {
     public class AuthorizationService : IAuthorizationService
     {

@@ -76,5 +76,10 @@
             public const string Prefix = rule + "Emails/";
             public const string SendEmail = Prefix + "SendEmail/";
         }
+        public static class InstructorRoute
+        {
+            public const string Prefix = rule + "Instructor/";
+            public const string Create = Prefix + "Create/";
+        }
     }
 }
