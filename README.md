@@ -548,7 +548,7 @@ Most tutorial-level APIs stop at CRUD with a database. This project goes further
 
 ## 👤 Author
 
-**Abdelrahman Mohamed** *(update with your name)*  
+**Abdelrahman Mohamed**   
 Backend Developer — ASP.NET Core / Clean Architecture  
 
 - GitHub: [abdelrahmanmoamenn](https://github.com/abdelrahmanmoamenn)
