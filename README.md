@@ -1,3 +1,4 @@
+[README.md](https://github.com/user-attachments/files/27070837/README.md)
 # 🏫 School Management System — Clean Architecture REST API
 
 <p align="center">
@@ -547,12 +548,12 @@ Most tutorial-level APIs stop at CRUD with a database. This project goes further
 
 ## 👤 Author
 
-**Abdelrahman Mohamed** *(update with your name)*  
+**Abdelrahman Mohamed**   
 Backend Developer — ASP.NET Core / Clean Architecture  
 
-- GitHub: [@your-username](https://github.com/your-username)
-- LinkedIn: [linkedin.com/in/your-profile](https://linkedin.com/in/your-profile)
-- Email: your-email@example.com
+- GitHub: [abdelrahmanmoamenn](https://github.com/abdelrahmanmoamenn)
+- LinkedIn: [linkedin.com/in/abdelrahman-moamen-594666289](https://linkedin.com/in/abdelrahman-moamen-594666289)
+- Email: abdelrahmanmoamen18@gmail.com
 
 ---
 
