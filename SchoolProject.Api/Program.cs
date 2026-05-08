@@ -124,10 +124,20 @@ builder.Services.AddTransient<IUrlHelper>(x =>
 builder.Services.AddTransient<AuthFilter>();
 
 //Serilog
-Log.Logger = new LoggerConfiguration()
-    .ReadFrom.Configuration(builder.Configuration).CreateLogger();
+try
+{
+    Log.Logger = new LoggerConfiguration()
+        .ReadFrom.Configuration(builder.Configuration)
+        .CreateLogger();
+}
+catch (Exception ex)
+{
+    Log.Logger = new LoggerConfiguration()
+        .WriteTo.Console()
+        .CreateLogger();
+    Log.Warning("Serilog config failed, falling back to console: {Message}", ex.Message);
+}
 builder.Services.AddSerilog();
-
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
