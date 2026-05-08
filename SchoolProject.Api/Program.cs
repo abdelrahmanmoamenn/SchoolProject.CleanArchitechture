@@ -137,6 +137,7 @@ using (var scope = app.Services.CreateScope())
     await RoleSeeder.SeedAsync(roleManager);
     await UserSeeder.SeedAsync(userManager);
 }
+app.MapOpenApi();
 app.MapScalarApiReference().AllowAnonymous();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
