@@ -63,11 +63,7 @@ builder.Services.AddOpenApi(options =>
 builder.Services.AddDbContext<ApplicationDbContext>(option =>
 {
     option.UseSqlServer(
-        builder.Configuration.GetConnectionString("SchoolDb"),
-        sqlOptions => sqlOptions.EnableRetryOnFailure(
-            maxRetryCount: 5,
-            maxRetryDelay: TimeSpan.FromSeconds(10),
-            errorNumbersToAdd: null));
+        builder.Configuration.GetConnectionString("SchoolDb"));
 });
 
 #region Dependency Injection
