@@ -142,6 +142,22 @@ catch (Exception ex)
     Log.Warning("Serilog config failed, falling back to console: {Message}", ex.Message);
 }
 builder.Services.AddSerilog();
+
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.InvalidModelStateResponseFactory = context =>
+    {
+        var errors = context.ModelState
+            .Where(x => x.Value.Errors.Count > 0)
+            .Select(x => new
+            {
+                Field = x.Key,
+                Errors = x.Value.Errors.Select(e => e.ErrorMessage)
+            });
+
+        return new BadRequestObjectResult(errors);
+    };
+});
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
