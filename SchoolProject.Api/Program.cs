@@ -127,7 +127,6 @@ builder.Services.AddTransient<AuthFilter>();
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration).CreateLogger();
 builder.Services.AddSerilog();
-builder.WebHost.UseUrls("http://0.0.0.0:8080");
 
 var app = builder.Build();
 
@@ -138,6 +137,7 @@ using (var scope = app.Services.CreateScope())
     await RoleSeeder.SeedAsync(roleManager);
     await UserSeeder.SeedAsync(userManager);
 }
+app.MapScalarApiReference().AllowAnonymous();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
