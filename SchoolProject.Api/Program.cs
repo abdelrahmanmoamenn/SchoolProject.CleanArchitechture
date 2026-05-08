@@ -62,8 +62,12 @@ builder.Services.AddOpenApi(options =>
 });
 builder.Services.AddDbContext<ApplicationDbContext>(option =>
 {
-
-    option.UseSqlServer(builder.Configuration.GetConnectionString("SchoolDb"));
+    option.UseSqlServer(
+        builder.Configuration.GetConnectionString("SchoolDb"),
+        sqlOptions => sqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(10),
+            errorNumbersToAdd: null));
 });
 
 #region Dependency Injection
@@ -142,10 +146,25 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
+    var db = scope.ServiceProvider
+        .GetRequiredService<ApplicationDbContext>();
+    db.Database.Migrate();   // creates the DB + applies all pending migrations
+}
+
+using (var scope = app.Services.CreateScope())
+{
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
-    await RoleSeeder.SeedAsync(roleManager);
-    await UserSeeder.SeedAsync(userManager);
+    try
+    {
+        await RoleSeeder.SeedAsync(roleManager);
+        await UserSeeder.SeedAsync(userManager);
+    }
+    catch (Exception ex)
+    {
+        Log.Error(ex, "Seeding failed");
+        // optionally rethrow or continue depending on your requirements
+    }
 }
 app.MapOpenApi();
 app.MapScalarApiReference().AllowAnonymous();
@@ -178,12 +197,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider
-                  .GetRequiredService<ApplicationDbContext>();
-    db.Database.Migrate();   // creates the DB + applies all pending migrations
-}
+
 
 app.Run();
 
