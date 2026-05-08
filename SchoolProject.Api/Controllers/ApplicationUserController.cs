@@ -35,13 +35,13 @@ namespace SchoolProject.Api.Controllers
             return NewResult(res);
 
         }
-        [HttpPut(Router.ApplicationUserRoute.Edit)]
-        public async Task<IActionResult> Edit([FromBody] EditUserCommand user)
-        {
-            var res = await _Mediator.Send(user);
-            return NewResult(res);
+        //[HttpPut(Router.ApplicationUserRoute.Edit)]
+        //public async Task<IActionResult> Edit([FromBody] EditUserCommand user)
+        //{
+        //    var res = await _Mediator.Send(user);
+        //    return NewResult(res);
 
-        }
+        //}
         [HttpPut(Router.ApplicationUserRoute.ChangePassword)]
         public async Task<IActionResult> ChangePassword([FromBody] ChangeUserPasswordCommand passwordCommand)
         {
