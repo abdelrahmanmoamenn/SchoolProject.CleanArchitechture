@@ -1,4 +1,3 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36401.2
@@ -12,6 +11,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchoolProject.Infrastructure", "SchoolProject.Infrastructure\SchoolProject.Infrastructure.csproj", "{8C9879ED-9F9C-48E8-A208-1F15A9595778}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchoolProject.Service", "SchoolProject.Service\SchoolProject.Service.csproj", "{5D712584-6813-45ED-BC6C-284B5EFA3CEC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchoolProject.XUnitTest", "SchoolProject.XUnitTest\SchoolProject.XUnitTest.csproj", "{4666B9E2-DE6F-483C-A9D6-819CB92E9A53}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +40,10 @@ Global
 		{5D712584-6813-45ED-BC6C-284B5EFA3CEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5D712584-6813-45ED-BC6C-284B5EFA3CEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5D712584-6813-45ED-BC6C-284B5EFA3CEC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4666B9E2-DE6F-483C-A9D6-819CB92E9A53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4666B9E2-DE6F-483C-A9D6-819CB92E9A53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4666B9E2-DE6F-483C-A9D6-819CB92E9A53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4666B9E2-DE6F-483C-A9D6-819CB92E9A53}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -47,4 +52,3 @@ Global
 		SolutionGuid = {73916FA9-67D2-461A-A179-A88FD229E856}
 	EndGlobalSection
 EndGlobal
-
