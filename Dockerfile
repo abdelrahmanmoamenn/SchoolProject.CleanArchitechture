@@ -3,7 +3,7 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
 # Copy solution and project files first (layer caching)
-COPY SchoolProject.CleanArchitechture.sln ./
+COPY SchoolProject.CleanArchitecture.sln ./
 COPY SchoolProject.Api/SchoolProject.Api.csproj                         SchoolProject.Api/
 COPY SchoolProject.Core/SchoolProject.Core.csproj                       SchoolProject.Core/
 COPY SchoolProject.Data/SchoolProject.Data.csproj                       SchoolProject.Data/
