@@ -34,7 +34,7 @@ namespace SchoolProject.Service.Implementations
             }
             catch
             {
-                await trans.CommitAsync();
+                await trans.RollbackAsync();
                 return "Faild";
 
             }

@@ -8,10 +8,10 @@ namespace SchoolProject.Infrastructure.Repositories
 {
     public class InstructorsRepository : GenericRepositoryAsync<Instructor>, IInstructorsRepository
     {
-        private readonly DbSet<Subjects> _instructors;
+        private readonly DbSet<Instructor> _instructors;
         public InstructorsRepository(ApplicationDbContext dbContext) : base(dbContext)
         {
-            _instructors = dbContext.Set<Subjects>();
+            _instructors = dbContext.Set<Instructor>();
         }
 
 
