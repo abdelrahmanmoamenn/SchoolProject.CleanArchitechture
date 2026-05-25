@@ -9,6 +9,7 @@
   <img src="https://img.shields.io/badge/Docker-Containerized-2496ED?style=for-the-badge&logo=docker&logoColor=white" />
   <img src="https://img.shields.io/badge/JWT-Authentication-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white" />
   <img src="https://img.shields.io/badge/CI%2FCD-AWS_CodeBuild-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white" />
+  <img src="https://img.shields.io/badge/xUnit-Tested-brightgreen?style=for-the-badge" />
 </p>
 
 A **production-deployed** school management REST API built with **ASP.NET Core 9** following strict **Clean Architecture** principles. The system delivers CQRS via MediatR, role and claims-based authorization, JWT authentication with refresh token rotation, bilingual localization (Arabic/English/German/French), column-level AES encryption, structured logging, Docker containerization, and a fully automated AWS CI/CD pipeline that deploys on every commit.
@@ -34,6 +35,7 @@ A **production-deployed** school management REST API built with **ASP.NET Core 9
 - [API Reference](#-api-reference)
 - [Security Model](#-security-model)
 - [Database Design](#-database-design)
+- [Testing](#-testing)
 - [Docker Deployment](#-docker-deployment)
 - [AWS Infrastructure & CI/CD](#-aws-infrastructure--cicd)
 - [Technical Highlights](#-technical-highlights)
@@ -150,6 +152,7 @@ The architecture enforces strict separation of concerns across five dedicated C#
 | Logging | Serilog (Console + MSSQL sink) |
 | API Documentation | Scalar / OpenAPI 9 |
 | Containerization | Docker + Docker Compose |
+| Testing | xUnit v3, Moq, FluentAssertions, EntityFrameworkCore.Testing.Moq |
 | Architecture | Clean Architecture |
 | Patterns | CQRS, Repository, Generic Repository, Mediator, Pipeline Behavior, Action Filter |
 
@@ -242,6 +245,10 @@ SchoolProject.CleanArchitechture/
 │   ├── Abstracts/                   # Service interfaces
 │   ├── Implementations/             # StudentService, DepartmentService, AuthService, etc.
 │   └── AuthServices/                # ICurrentUserService + implementation
+│
+├── SchoolProject.XUnitTest/         # Unit test project
+│   ├── CoreTests/Students/          # Command and query handler tests
+│   └── ServicesTest/                # Extension method tests
 │
 ├── docs/
 │   └── screenshots/                 # AWS console + code structure screenshots
@@ -529,6 +536,21 @@ User ──< UserRefreshToken
 | Admin User | 1 |
 
 ---
+## 🧪 Testing
+
+The project includes a dedicated xUnit test project (`SchoolProject.XUnitTest`) covering CQRS handlers and utility extensions.
+
+| Test Class | Coverage |
+|---|---|
+| `StudentCommandHandlerTest` | Add student → 201 Created; Add failure → 400 Bad Request; Edit missing student → 400 Bad Request |
+| `StudentQueryHandlerTest` | List students; Get by ID (found → 200, not found → 404); Paginated list with filtering |
+| `ExtensionMethodTest` | `ToPaginatedListAsync` returns correct paginated result |
+
+**Libraries used:** `xUnit v3`, `Moq`, `FluentAssertions`, `EntityFrameworkCore.Testing.Moq`
+
+**Test patterns demonstrated:** Arrange-Act-Assert, `[Theory]` + `[InlineData]`, `[MemberData]`, `[ClassData]`, `Mock.Setup`, `Mock.Verify`, `CollectionBehavior` parallelism control.
+
+---
 
 ## 🐳 Docker Deployment
 
@@ -667,6 +689,7 @@ SchoolProject.CleanArchitechture/
 ├── SchoolProject.Data/
 ├── SchoolProject.Infrastructure/
 ├── SchoolProject.Service/
+├── SchoolProject.XUnitTest/
 ├── docs/
 │   └── screenshots/
 │       ├── aws-codebuild-history.png
