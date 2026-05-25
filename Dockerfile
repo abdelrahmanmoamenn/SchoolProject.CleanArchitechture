@@ -9,13 +9,11 @@ COPY SchoolProject.Core/SchoolProject.Core.csproj                       SchoolPr
 COPY SchoolProject.Data/SchoolProject.Data.csproj                       SchoolProject.Data/
 COPY SchoolProject.Infrastructure/SchoolProject.Infrastructure.csproj   SchoolProject.Infrastructure/
 COPY SchoolProject.Service/SchoolProject.Service.csproj                 SchoolProject.Service/
-COPY SchoolProject.XUnitTest/SchoolProject.XUnitTest.csproj           SchoolProject.XUnitTest/
-
 
 # Clear Windows-specific NuGet fallback folders
 RUN dotnet nuget locals all --clear
 # Restore dependencies
-RUN dotnet restore
+RUN dotnet restore SchoolProject.Api/SchoolProject.Api.csproj
 
 # Copy everything else and build
 COPY . .
