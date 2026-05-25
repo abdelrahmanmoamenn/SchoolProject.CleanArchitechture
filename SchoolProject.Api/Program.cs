@@ -160,7 +160,15 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider
         .GetRequiredService<ApplicationDbContext>();
-    db.Database.Migrate();   // creates the DB + applies all pending migrations
+    try
+    {
+        db.Database.Migrate();
+    }
+    catch (Exception ex)
+    {
+        Log.Fatal(ex, "Database migration failed. Application cannot start.");
+        throw; // or Environment.Exit(1) — either way, fail fast with a clear log
+    }   // creates the DB + applies all pending migrations
 }
 
 using (var scope = app.Services.CreateScope())
